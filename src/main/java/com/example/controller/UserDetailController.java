@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.domain.user.model.MUser;
@@ -28,10 +29,32 @@ public class UserDetailController {
 		user.setPassword(null);
 
 		form = modelMapper.map(user, UserDetailForm.class);
+		form.setSalaryList(user.getSalaryList());
 		
 		model.addAttribute("userDetailForm", form);
 		
 		return "user/detail";
 		
 	}
+	
+	@PostMapping(value = "/detail", params = "update")
+	public String updateUser(UserDetailForm form, Model model) {
+		
+		userService.updateUserOne(
+				form.getUserId(),
+				form.getPassword(),
+				form.getUserName()
+				);
+		
+		return "redilect:/user/list";
+	}
+	
+	@PostMapping(value = "/detail", params = "delete")
+	public String deleteUser(UserDetailForm form, Model model) {
+		
+		userService.deleteUserOne(form.getPassword());
+		
+		return "redirect:/user/list";
+	}
+	
 }
